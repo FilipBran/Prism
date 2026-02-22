@@ -1,25 +1,27 @@
 using System.IO.Compression;
 using System.Reflection;
 using Allumeria;
-using System.Collections.Generic;
-using System.Linq;
 using HarmonyLib;
 
 namespace Prism;
 
-
 public sealed class Prism : IExternalLoader
 {
+    // Game root directory
     public static string GameDir;
-
+    
     private static readonly List<Mod> Mods = new();
-
+    
+    // List of loaded mods
     public static IReadOnlyList<Mod> LoadedMods => Mods;
-
+    
+    // Packages directory
     private static string PackagesDir => Path.Combine(GameDir, "mods", Constants.PackagesDirectory);
-
+    
+    // 
     void IExternalLoader.Init()
     {
+        // S game root directory
         GameDir = Directory.GetCurrentDirectory();
 
         // Setup AdvancedLogger
@@ -27,18 +29,19 @@ public sealed class Prism : IExternalLoader
             GameDir,
             "logs",
             $"prism-{DateTime.Now.Year}_{DateTime.Now.Month}_{DateTime.Now.Day}_{DateTime.Now.Hour}_{DateTime.Now.Minute}_{DateTime.Now.Second}.txt"));
-
+        
         AdvancedLogger.Log("Prism => Prism initialized successfully!", AdvancedLogger.LogType.Info);
 
         CreateMissingPrismDirs();
         LoadMods();
-
+        
+        // Add Prism watermark to game version
         Game.FULL_VERSION = $"{Game.FULL_VERSION} [Prism {Constants.Version}  | {Mods.Count} mods]";
         // Change demoMode to true in a release version!
             Game.demoMode = false;
         
     }
-
+    
     private void CreateMissingPrismDirs()
     {
         // packages
@@ -48,11 +51,6 @@ public sealed class Prism : IExternalLoader
             AdvancedLogger.Log($"Prism => Creating '{Constants.PackagesDirectory}' at {PackagesDir}", AdvancedLogger.LogType.Warning);
             Directory.CreateDirectory(PackagesDir);
         }
-    }
-
-    public void RegisterMod(Mod mod)
-    {
-        Mods.Add(mod);
     }
 
     private void LoadMods()
@@ -109,7 +107,8 @@ public sealed class Prism : IExternalLoader
                             AdvancedLogger.Log($"Prism => Failed to create mod instance for {t.FullName}", AdvancedLogger.LogType.Warning);
                             continue;
                         }
-
+                        
+                        // Mod-loading magic!
                         mod.Assembly = asm;
                         mod.PackagePath = file;
                         mod.Harmony = new Harmony(mod.Id);

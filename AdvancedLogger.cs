@@ -4,7 +4,7 @@ using Allumeria;
 
 public sealed class AdvancedLogger
 {
-    public static string LogFile;
+    private static string LogFile;
     private static StreamWriter Writer;
     
     public static void Init(string logFile)

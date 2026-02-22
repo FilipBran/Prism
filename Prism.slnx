@@ -1,3 +1,5 @@
 <Solution>
-  <Project Path="Prism.csproj" />
+  <Project Path="Prism.csproj">
+    <Deploy Solution="Release|*" />
+  </Project>
 </Solution>

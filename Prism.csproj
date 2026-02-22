@@ -4,6 +4,16 @@
         <TargetFramework>net10.0</TargetFramework>
         <ImplicitUsings>enable</ImplicitUsings>
         <Nullable>enable</Nullable>
+        <AssemblyName>Loader</AssemblyName>
     </PropertyGroup>
+
+    <ItemGroup>
+      <Reference Include="0Harmony">
+        <HintPath>HarmonyX.2.16.0\lib\net452\0Harmony.dll</HintPath>
+      </Reference>
+      <Reference Include="Allumeria">
+        <HintPath>..\..\..\..\Volumes\Allumeria Demo - Steam\Allumeria.dll</HintPath>
+      </Reference>
+    </ItemGroup>
 
 </Project>

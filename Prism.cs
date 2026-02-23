@@ -18,7 +18,6 @@ public sealed class Prism : IExternalLoader
     // Packages directory
     private static string PackagesDir => Path.Combine(GameDir, "mods", Constants.PackagesDirectory);
     
-    // 
     void IExternalLoader.Init()
     {
         // Set game root directory
@@ -79,7 +78,7 @@ public sealed class Prism : IExternalLoader
                     continue;
                 }
                 
-                // Magic! I forgot how it works!
+                // Magic! I forgot how it works.
                 // Better not touch this!
                 byte[] asmBytes;
                 using (var s = entry.Open())

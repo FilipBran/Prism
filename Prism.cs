@@ -33,11 +33,33 @@ public sealed class Prism : IExternalLoader
 
         CreateMissingPrismDirs();
         LoadMods();
+
+        // Check if the game version is valid
+        if (Constants.TargetGameVersion == Game.VERSION)
+        {
+            AdvancedLogger.Log($"Prism => Prism version {Constants.Version} was made for {Constants.TargetGameVersion}. Loader will continue to load mods. Something may break!", AdvancedLogger.LogType.Warning);
+            
+            // Add Prism watermark to the game version and make it more readable and use proper English!
+            // Such small, subtle things make loader more polished.
+            if (Mods.Count == 1)
+            {
+                Game.FULL_VERSION = $"{Game.FULL_VERSION} [Prism {Constants.Version} | 1 mod]";
+            }else if (Mods.Count > 1)
+            {
+                Game.FULL_VERSION = $"{Game.FULL_VERSION} [Prism {Constants.Version} | {Mods.Count} mods]";
+            }else if (Mods.Count == 0)
+            {
+                Game.FULL_VERSION = $"{Game.FULL_VERSION} [Prism {Constants.Version}]";
+            }
+        }
+        else
+        {
+            // Add Prism watermark to the game version
+            Game.FULL_VERSION = $"{Game.FULL_VERSION} [Prism {Constants.Version} | INVALID GAME VERSION! | {Mods.Count} mods]";
+        }
         
-        // Add Prism watermark to game version
-        Game.FULL_VERSION = $"{Game.FULL_VERSION} [Prism {Constants.Version}  | {Mods.Count} mods]";
         // Change demoMode to true in a release version!
-            Game.demoMode = true;
+            Game.demoMode = false;
         
     }
     
@@ -139,10 +161,11 @@ public sealed class Prism : IExternalLoader
     }
     private static class Constants
     {
-        public const string Version = "0.2";
+        public const string Version = "0.2.1";
         public const string PackagesDirectory = "prism-packages";
         public const string CacheDirectory = "prism-cache";
         public const string AllumeriaId = "Allumeria";
         public const string PackageExtension = ".prism";
+        public const string TargetGameVersion = "0.14";
     }
 }

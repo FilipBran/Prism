@@ -35,12 +35,9 @@ public sealed class Prism : IExternalLoader
         LoadMods();
 
         // Check if the game version is valid
-        if (Constants.TargetGameVersion == Game.VERSION)
+        if (Constants.TargetGameVersion.Equals(Game.VERSION))
         {
-            AdvancedLogger.Log($"Prism => Prism version {Constants.Version} was made for {Constants.TargetGameVersion}. Loader will continue to load mods. Something may break!", AdvancedLogger.LogType.Warning);
-            
             // Add Prism watermark to the game version and make it more readable and use proper English!
-            // Such small, subtle things make loader more polished.
             if (Mods.Count == 1)
             {
                 Game.FULL_VERSION = $"{Game.FULL_VERSION} [Prism {Constants.Version} | 1 mod]";
@@ -55,7 +52,8 @@ public sealed class Prism : IExternalLoader
         else
         {
             // Add Prism watermark to the game version
-            Game.FULL_VERSION = $"{Game.FULL_VERSION} [Prism {Constants.Version} | INVALID GAME VERSION! | {Mods.Count} mods]";
+            Game.FULL_VERSION = $"{Game.FULL_VERSION} [Prism {Constants.Version} | INVALID GAME VERSION! | {Mods.Count} mod/s]";
+            AdvancedLogger.Log($"Prism => Prism version {Constants.Version} was made for {Constants.TargetGameVersion} but current game version is {Game.VERSION}. Loader will continue to load mods, but note that something may break!", AdvancedLogger.LogType.Warning);
         }
         
         // Change demoMode to true in a release version!

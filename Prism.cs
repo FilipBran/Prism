@@ -38,7 +38,7 @@ public sealed class Prism : IExternalLoader
         // Add Prism watermark to game version
         Game.FULL_VERSION = $"{Game.FULL_VERSION} [Prism {Constants.Version}  | {Mods.Count} mods]";
         // Change demoMode to true in a release version!
-            Game.demoMode = false;
+            Game.demoMode = true;
         
     }
     
@@ -60,22 +60,27 @@ public sealed class Prism : IExternalLoader
             AdvancedLogger.Log($"Prism => Packages directory missing: {PackagesDir}", AdvancedLogger.LogType.Warning);
             return;
         }
-
+        
+        // Find all packages with the .prism (Constants.PackageExtension) extension
         foreach (var file in Directory.GetFiles(PackagesDir, $"*{Constants.PackageExtension}"))
         {
             AdvancedLogger.Log($"Prism => Found mod package {file}", AdvancedLogger.LogType.Info);
 
             try
             {
+                // Open found .prism
                 using ZipArchive archive = ZipFile.Open(file, ZipArchiveMode.Read);
-
+                
+                // Get Mod.dll if exists
                 var entry = archive.GetEntry("Mod.dll");
                 if (entry == null)
                 {
                     AdvancedLogger.Log($"Prism => {file} does not contain Mod.dll", AdvancedLogger.LogType.Warning);
                     continue;
                 }
-
+                
+                // Magic! I forgot how it works!
+                // Better not touch this!
                 byte[] asmBytes;
                 using (var s = entry.Open())
                 using (var ms = new MemoryStream())
@@ -85,7 +90,8 @@ public sealed class Prism : IExternalLoader
                 }
 
                 var asm = Assembly.Load(asmBytes);
-
+                
+                // Find all classes inherited from Prism.Mod
                 var modTypes = asm
                     .GetExportedTypes()
                     .Where(t => typeof(Mod).IsAssignableFrom(t) && !t.IsAbstract && t.GetConstructor(Type.EmptyTypes) != null)
@@ -114,6 +120,8 @@ public sealed class Prism : IExternalLoader
                         mod.Harmony = new Harmony(mod.Id);
                         mod.Harmony.PatchAll();
                         mod.Init();
+                        // Patch again just to be sure...
+                        mod.Harmony.PatchAll();
                         Mods.Add(mod);
 
                         AdvancedLogger.Log($"Prism => Loaded mod '{mod.Name}' v{mod.Version} ({mod.Id})", AdvancedLogger.LogType.Info);
@@ -136,6 +144,6 @@ public sealed class Prism : IExternalLoader
         public const string PackagesDirectory = "prism-packages";
         public const string CacheDirectory = "prism-cache";
         public const string AllumeriaId = "Allumeria";
-        public const string PackageExtension = ".prism.zip";
+        public const string PackageExtension = ".prism";
     }
 }

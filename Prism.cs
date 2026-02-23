@@ -21,7 +21,7 @@ public sealed class Prism : IExternalLoader
     // 
     void IExternalLoader.Init()
     {
-        // S game root directory
+        // Set game root directory
         GameDir = Directory.GetCurrentDirectory();
 
         // Setup AdvancedLogger

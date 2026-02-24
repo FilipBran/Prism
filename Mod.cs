@@ -20,6 +20,7 @@ public abstract class Mod
     /// <summary>Set by Prism after loading.</summary>
     public string? PackagePath { get; internal set; }
     
+    /// <summary>Set by Prism after loading.</summary>
     public Harmony? Harmony { get; internal set; }
 
     /// <summary>

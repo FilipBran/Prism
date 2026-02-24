@@ -74,13 +74,7 @@ public sealed class Prism : IExternalLoader
 
     private void LoadMods()
     {
-        if (!Directory.Exists(PackagesDir))
-        {
-            AdvancedLogger.Log($"Prism => Packages directory missing: {PackagesDir}", AdvancedLogger.LogType.Warning);
-            return;
-        }
-        
-        // Find all packages with the .prism (Constants.PackageExtension) extension
+        // Find all packages with the (Constants.PackageExtension) extension
         foreach (var file in Directory.GetFiles(PackagesDir, $"*{Constants.PackageExtension}"))
         {
             AdvancedLogger.Log($"Prism => Found mod package {file}", AdvancedLogger.LogType.Info);
@@ -98,8 +92,7 @@ public sealed class Prism : IExternalLoader
                     continue;
                 }
                 
-                // Magic! I forgot how it works.
-                // Better not touch this!
+                // Load assembly Mod.dll
                 byte[] asmBytes;
                 using (var s = entry.Open())
                 using (var ms = new MemoryStream())
@@ -129,7 +122,16 @@ public sealed class Prism : IExternalLoader
                         var mod = (Mod?)Activator.CreateInstance(t);
                         if (mod == null)
                         {
-                            AdvancedLogger.Log($"Prism => Failed to create mod instance for {t.FullName}", AdvancedLogger.LogType.Warning);
+                            // Load non-Mod.dll dll
+                            byte[] asmBytes2;
+                            using (var s = entry.Open())
+                            using (var ms = new MemoryStream())
+                            {
+                                s.CopyTo(ms);
+                                asmBytes2 = ms.ToArray();
+                            }
+
+                            var asm2 = Assembly.Load(asmBytes);
                             continue;
                         }
                         
